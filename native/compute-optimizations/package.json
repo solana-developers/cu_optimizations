@@ -1,0 +1,26 @@
+{
+  "private": true,
+  "scripts": {
+    "programs:build": "zx ./scripts/program/build.mjs",
+    "programs:test": "zx ./scripts/program/test.mjs",
+    "programs:clean": "zx ./scripts/program/clean.mjs",
+    "programs:format": "zx ./scripts/program/format.mjs",
+    "programs:lint": "zx ./scripts/program/lint.mjs",
+    "generate:idls": "zx ./scripts/generate-idls.mjs",
+    "generate": "pnpm generate:idls && pnpm generate:clients",
+    "generate:clients": "zx ./scripts/generate-clients.mjs",
+    "validator:start": "zx ./scripts/start-validator.mjs",
+    "validator:restart": "pnpm validator:start --restart",
+    "validator:stop": "zx ./scripts/stop-validator.mjs",
+    "clients:js:test": "zx ./scripts/client/test-js.mjs",
+    "clients:rust:test": "zx ./scripts/client/test-rust.mjs"
+  },
+  "devDependencies": {
+    "@iarna/toml": "^2.2.5",
+    "@metaplex-foundation/kinobi": "^0.17.8",
+    "@metaplex-foundation/shank-js": "^0.1.7",
+    "typescript": "^5.3.3",
+    "zx": "^7.2.3"
+  },
+  "packageManager": "pnpm@8.9.0"
+}
