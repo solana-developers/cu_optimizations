@@ -76,7 +76,6 @@ pub mod counter {
 
         // 357
         compute_fn! { "Push Vector u64 " =>
-            // this costs 618 CU
             let mut a: Vec<u64> = Vec::new();
             a.push(1);
             a.push(1);
@@ -243,12 +242,12 @@ pub mod counter {
     // which is not bad, but could be better.
     // If you instead use the bump that is saved in the counter_checked account it becomes 27859 CU so the overhead of the check is only 3000 CU
     pub fn pdas(ctx: Context<PdaAccounts>) -> Result<()> {
+        let program_id = Pubkey::from_str("5w6z5PWvtkCd4PaAV7avxE6Fy5brhZsFdbRLMt8UefRQ").unwrap();
+
         // 12,136 CUs
         compute_fn! { "Find PDA" =>
             Pubkey::find_program_address(&[b"counter"], ctx.program_id);
         }
-
-        let program_id = Pubkey::from_str("5w6z5PWvtkCd4PaAV7avxE6Fy5brhZsFdbRLMt8UefRQ").unwrap();
 
         // 1,651 CUs
         compute_fn! { "Find PDA" =>

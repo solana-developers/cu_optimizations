@@ -190,6 +190,31 @@ pub fn pdas(ctx: Context<PdaAccounts>) -> Result<()> {
 
     Ok(())
 }
+
+#[derive(Accounts)]
+pub struct PdaAccounts<'info> {
+    #[account(mut)]
+    pub counter: Account<'info, CounterData>,
+    // 12,136 CUs when not defining the bump
+    #[account(
+        seeds = [b"counter"],
+        bump
+    )]
+    pub counter_checked: Account<'info, CounterData>,
+}
+
+#[derive(Accounts)]
+pub struct PdaAccounts<'info> {
+    #[account(mut)]
+    pub counter: Account<'info, CounterData>,
+    // only 1600 if using the bump that is saved in the counter_checked account
+    #[account(
+        seeds = [b"counter"],
+        bump = counter_checked.bump
+    )]
+    pub counter_checked: Account<'info, CounterData>,
+}
+
 ````
 
 ## 5 Closures and function
