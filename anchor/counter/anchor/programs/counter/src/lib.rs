@@ -151,7 +151,7 @@ pub mod counter {
         Ok(())
     }
 
-    // Total 16058 CU
+    // Total 16058 CU - there seem to be no big speed differences here. Surprisingly the function version is cheapest
     pub fn increment_with_fn_call(ctx: Context<Update>) -> Result<()> {
         let closure = |x: u64| -> u64 { x + 1 };
 
@@ -182,7 +182,7 @@ pub mod counter {
         Ok(())
     }
 
-    // Total 13496 CU
+    // Total 13496 CU - There seems to be no speed improvements here
     pub fn increment_zero_copy(ctx: Context<UpdateZeroCopy>) -> Result<()> {
         let mut counter = ctx.accounts.counter_zero_copy.load_mut()?;
 
@@ -235,10 +235,13 @@ pub mod counter {
     }
 
     pub fn init_pda_with_seed(ctx: Context<InitPdaWithSeeds>) -> Result<()> {
+        ctx.accounts.counter_checked.bump = ctx.bumps.counter_checked;
         Ok(())
     }
 
-    // Total 24985 CU - with the anchor checks for account_checked it becomes 38135 CU
+    // Total 24985 CU - with the anchor checks for account_checked it becomes 38135 CU so the seeds check is around 12000 CU
+    // which is not bad, but could be better.
+    // If you instead use the bump that is saved in the counter_checked account it becomes 27859 CU so the overhead of the check is only 3000 CU
     pub fn pdas(ctx: Context<PdaAccounts>) -> Result<()> {
         // 12,136 CUs
         compute_fn! { "Find PDA" =>
@@ -318,7 +321,7 @@ pub struct InitializeCounterZeroCopy<'info> {
 #[derive(Accounts)]
 pub struct Update<'info> {
     #[account(mut)]
-    pub counter: Account<'info, CounterData>,
+    pub counter: Box<Account<'info, CounterData>>,
 }
 
 #[derive(Accounts)]
@@ -340,9 +343,10 @@ pub struct InitPdaWithSeeds<'info> {
 pub struct PdaAccounts<'info> {
     #[account(mut)]
     pub counter: Account<'info, CounterData>,
+    // 12,136 CUs when not defining the bump, but only 1600 if using the bump that is saved in the counter_checked account
     #[account(
         seeds = [b"counter"],
-        bump,
+        bump = counter_checked.bump
     )]
     pub counter_checked: Account<'info, CounterData>,
 }
@@ -380,6 +384,7 @@ pub struct CounterData {
     test1: u64,
     test2: u64,
     big_struct: BigStruct,
+    bump: u8,
 }
 
 // 5020 CU

@@ -2,13 +2,21 @@
 
 ## Introduction
 
+Currently every transactions on Solana costs 5000 Lamports independant on the compute units used. 
+Three reasons on why to optimize CU anyway:
+1. In the future there may be costs on compute units used.
+2. A smaller transaction is more likely to be included in a block if there is significant network activity competing for block space.
+3. It makes your program more composable, because when another program does a CPI in your program it also need to cover your CU.
+4. More block space for everyone
+
 By default every transaction on solana requests 200.000 CUs. 
 With the call setComputeLimit this can be increased to a maximum of 1.4 million and the blockspace limit is 48 million CU and 12M CU/account write lock/slot.
 
+If you are only doing a simple transfer, you can set the CU limit to 300 for example.
 
 ```js
   const computeLimitIx = ComputeBudgetProgram.setComputeUnitLimit({
-    units: 200_000,
+    units: 300,
   });
 
 ```
@@ -42,10 +50,10 @@ https://github.com/solana-labs/solana/issues/29582
 Things to Optimize 
 
 - Logging (done)
-- Error Handling 
+- Error Handling (done)
 - Unsave Math (done)
 - Borsh (done)
-- Closures vs functions vs inlining 
+- Closures vs functions vs inlining (done)
 - Memory Allocation 
 - CPIs (done)
 - anchor vs native

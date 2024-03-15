@@ -211,6 +211,10 @@ export type Counter = {
             "type": {
               "defined": "BigStruct"
             }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -495,6 +499,10 @@ export const IDL: Counter = {
             "type": {
               "defined": "BigStruct"
             }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }

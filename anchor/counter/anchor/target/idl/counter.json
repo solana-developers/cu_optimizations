@@ -211,6 +211,10 @@
             "type": {
               "defined": "BigStruct"
             }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
