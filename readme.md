@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Every block on Solana currently has a blockspace limit of 48 million CU and a 12 million CU per write lock. If you exhaust the CU limit your transaction will fail. Optimizing your program CUs has many advantages.
+Every block on Solana has a blockspace limit of 48 million CUs and a 12 million CUs per account write lock. If you exhaust the CU limit your transaction will fail. Optimizing your program CUs has many advantages.
 
 Currently every transactions on Solana costs 5000 lamports independant on the compute units used. 
 Four reasons on why to optimize CU anyway:
@@ -159,14 +159,14 @@ pub fn initialize_zero_copy(_ctx: Context<InitializeCounterZeroCopy>) -> Result<
 
 ```rust 
 // 108 CU - total CU including serialization 2600 
+let counter = &mut ctx.accounts.counter;
 compute_fn! { "Borsh Serialize" =>
-    let counter = &mut ctx.accounts.counter;
     counter.count = counter.count.checked_add(1).unwrap();
 }
 
 // 151 CU - total CU including serialization 1254 
+  let counter = &mut ctx.accounts.counter_zero_copy.load_mut()?;
 compute_fn! { "Zero Copy Serialize" =>
-    let counter = &mut ctx.accounts.counter_zero_copy.load_mut()?;
     counter.count = counter.count.checked_add(1).unwrap();
 }
 ```
