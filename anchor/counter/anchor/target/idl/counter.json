@@ -25,6 +25,17 @@
       "args": []
     },
     {
+      "name": "incrementWithFnCall",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "incrementZeroCopy",
       "accounts": [
         {
@@ -78,7 +89,7 @@
       "args": []
     },
     {
-      "name": "set",
+      "name": "setBigData",
       "accounts": [
         {
           "name": "counter",
@@ -88,7 +99,86 @@
       ],
       "args": [
         {
-          "name": "value",
+          "name": "data",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "setSmallData",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "data",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "initPdaWithSeed",
+      "accounts": [
+        {
+          "name": "counterChecked",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "pdas",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "counterChecked",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "doCpi",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "data",
           "type": "u64"
         }
       ]
@@ -96,7 +186,7 @@
   ],
   "accounts": [
     {
-      "name": "Counter",
+      "name": "CounterData",
       "type": {
         "kind": "struct",
         "fields": [

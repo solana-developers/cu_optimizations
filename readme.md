@@ -36,15 +36,16 @@ https://github.com/solana-labs/solana/blob/090e11210aa7222d8295610a6ccac4acda711
 Blocks are packed using the real CU used and not the requested CU.
 
 
-
+There may be a CU cost to loaded account size as well soon with a maximum of 16.000 CU which would be charges heap space at rate of 8cu per 32K. (Max loaded accounts per transaction is 64Mb)
+https://github.com/solana-labs/solana/issues/29582 
 
 Things to Optimize 
 
-- Logging 
-- Error Handling
-- Unsave Math 
-- Borsh 
-- Closures 
-- Memory Allocation
-- Inlining 
-- CPIs 25k 
+- Logging (done)
+- Error Handling 
+- Unsave Math (done)
+- Borsh (done)
+- Closures vs functions vs inlining 
+- Memory Allocation 
+- CPIs (done)
+- anchor vs native

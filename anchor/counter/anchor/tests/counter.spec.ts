@@ -1,6 +1,6 @@
 import * as anchor from '@coral-xyz/anchor';
 import { Program } from '@coral-xyz/anchor';
-import { Keypair } from '@solana/web3.js';
+import { Keypair, PublicKey } from '@solana/web3.js';
 import { Counter } from '../target/types/counter';
 
 describe('counter', () => {
@@ -55,7 +55,7 @@ describe('counter', () => {
 
       console.log("Increment counter " + sig);
 
-      const currentCount = await program.account.counter.fetch(
+      const currentCount = await program.account.counterData.fetch(
         counterKeypair.publicKey
       );
       console.log("Current count " + currentCount.count.toNumber());
@@ -89,17 +89,104 @@ describe('counter', () => {
       console.log("Allocations " + JSON.stringify(sig));
   });
 
-  it('Set counter value', async () => {
+  it('Closure and Function calls', async () => {
+    const sim = await program.methods
+      .incrementWithFnCall()
+      .accounts({ counter: counterKeypair.publicKey})
+      .simulate();
+
+      console.log("Closure and Function calls " + JSON.stringify(sim));
+  });
+
+  it('Set counter value u64', async () => {
+    const sim = await program.methods
+      .setBigData(new anchor.BN(42))
+      .accounts({ counter: counterKeypair.publicKey})
+      .simulate();
+
+    console.log("Set value u64:  " + JSON.stringify(sim));
+
     await program.methods
-      .set(new anchor.BN(42))
+      .setBigData(new anchor.BN(42))
       .accounts({ counter: counterKeypair.publicKey})
       .rpc();
 
-    const currentCount = await program.account.counter.fetch(
+    const currentCount = await program.account.counterData.fetch(
       counterKeypair.publicKey
     );
 
     expect(currentCount.count.toNumber()).toEqual(42);
   });
+
+
+  it('Set counter value u8', async () => {
+
+    const sim =await program.methods
+      .setSmallData(42)
+      .accounts({ counter: counterKeypair.publicKey})
+      .simulate();
+
+    console.log("Set value u8:  " + JSON.stringify(sim));
+
+    await program.methods
+      .setSmallData(42)
+      .accounts({ counter: counterKeypair.publicKey})
+      .rpc();
+
+    const currentCount = await program.account.counterData.fetch(
+      counterKeypair.publicKey
+    );
+
+    expect(currentCount.count.toNumber()).toEqual(42);
+  });
+
+  it('CPI', async () => {
+    const sim =await program.methods
+      .doCpi(new anchor.BN(1))
+      .accounts({ counter: counterKeypair.publicKey})
+      .simulate();
+
+    console.log("Do Cpi:  " + JSON.stringify(sim));
+
+    const sig = await program.methods
+      .doCpi(new anchor.BN(1))
+      .accounts({ counter: counterKeypair.publicKey})
+      .rpc({skipPreflight: true});
+      console.log("Do CPI " + sig);
+});
+
+it('PDAS', async () => {
+  const counter_checked = PublicKey.findProgramAddressSync([Buffer.from("counter")], program.programId);
+
+  const init_sig = await program.methods
+  .initPdaWithSeed()
+  .accounts({ 
+    counterChecked: counter_checked[0],
+    systemProgram: anchor.web3.SystemProgram.programId
+  })
+  .rpc({skipPreflight: true});
+  console.log("Init Pda with seed " + init_sig);
+
+  const sim =await program.methods
+    .pdas()
+    .accounts({ 
+      counter: counterKeypair.publicKey,
+      counterChecked: counter_checked[0],
+    })
+    .simulate();
+
+  console.log("PDAS:  " + JSON.stringify(sim));
+
+  const sig = await program.methods
+    .pdas()
+    .accounts({ 
+      counter: counterKeypair.publicKey,
+      counterChecked: counter_checked[0],
+      systemProgram: anchor.web3.SystemProgram.programId
+    })
+    .rpc({skipPreflight: true});
+    console.log("PDAS " + sig);
+});
+
 
 });

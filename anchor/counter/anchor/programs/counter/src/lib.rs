@@ -26,14 +26,20 @@ macro_rules! compute_fn {
     };
 }
 
-pub fn increase_counter_test(count: u64) -> u64 {
-    return 5;
+pub fn increase_counter_function(mut count: u64) -> u64 {
+    count += 1;
+    count
 }
 
 #[program]
 pub mod counter {
+
+    use anchor_lang::system_program;
+    use std::str::FromStr;
+
     use super::*;
 
+    // Total 19241 CU
     pub fn allocations(ctx: Context<Update>) -> Result<()> {
         // 109 CU
         compute_fn! { "increase u8" =>
@@ -114,7 +120,7 @@ pub mod counter {
     // Total 14742 CU
     pub fn increment(ctx: Context<Update>) -> Result<()> {
         // There seems to not be any difference in between different ways of using checked_add
-        let mut counter = &mut ctx.accounts.counter;
+        let counter = &mut ctx.accounts.counter;
 
         // 3405 CU
         compute_fn! { "counter checked_add.unwrap()" =>
@@ -145,18 +151,36 @@ pub mod counter {
         Ok(())
     }
 
-    pub fn increment_fn_call(ctx: Context<Update>) -> Result<()> {
-        // let closure = |x: u64| -> u64 { x + 1 };
+    // Total 16058 CU
+    pub fn increment_with_fn_call(ctx: Context<Update>) -> Result<()> {
+        let closure = |x: u64| -> u64 { x + 1 };
 
-        //closure(ctx.accounts.counter.count);
+        // 3913 CU
+        compute_fn! { "counter with closure call" =>
+            for _ in 0..254 {
+                ctx.accounts.counter.count = closure(ctx.accounts.counter.count);
+            }
+        }
+        msg!("Counter: {}", ctx.accounts.counter.count);
 
-        increase_counter_test(5);
+        // 3660 CU
+        compute_fn! { "counter with function call" =>
+            for _ in 0..254 {
+                ctx.accounts.counter.count = increase_counter_function(ctx.accounts.counter.count);
+            }
+        }
+        msg!("Counter: {}", ctx.accounts.counter.count);
+
+        // 3914 CU
+        compute_fn! { "inline " =>
+            for _ in 0..254 {
+                ctx.accounts.counter.count += 1;
+            }
+        }
+        msg!("Counter: {}", ctx.accounts.counter.count);
+
         Ok(())
     }
-
-    /*pub fn increase_counter(count: u64) -> Result<()> {
-        Ok(())
-    }*/
 
     // Total 13496 CU
     pub fn increment_zero_copy(ctx: Context<UpdateZeroCopy>) -> Result<()> {
@@ -200,8 +224,66 @@ pub mod counter {
         Ok(())
     }
 
-    pub fn set(ctx: Context<Update>, value: u64) -> Result<()> {
-        ctx.accounts.counter.count = value;
+    pub fn set_big_data(ctx: Context<Update>, _data: u64) -> Result<()> {
+        ctx.accounts.counter.count = _data;
+        Ok(())
+    }
+
+    pub fn set_small_data(ctx: Context<Update>, _data: u8) -> Result<()> {
+        ctx.accounts.counter.count = _data as u64;
+        Ok(())
+    }
+
+    pub fn init_pda_with_seed(ctx: Context<InitPdaWithSeeds>) -> Result<()> {
+        Ok(())
+    }
+
+    // Total 24985 CU - with the anchor checks for account_checked it becomes 38135 CU
+    pub fn pdas(ctx: Context<PdaAccounts>) -> Result<()> {
+        // 12,136 CUs
+        compute_fn! { "Find PDA" =>
+            Pubkey::find_program_address(&[b"counter"], ctx.program_id);
+        }
+
+        let program_id = Pubkey::from_str("5w6z5PWvtkCd4PaAV7avxE6Fy5brhZsFdbRLMt8UefRQ").unwrap();
+
+        // 1,651 CUs
+        compute_fn! { "Find PDA" =>
+            Pubkey::create_program_address(&[b"counter", &[248_u8]], &program_id).unwrap();
+        }
+
+        Ok(())
+    }
+
+    // Total 5787 CU
+    pub fn do_cpi(ctx: Context<DoCpi>, _data: u64) -> Result<()> {
+        // 2,215 CUs
+        compute_fn! { "CPI system program" =>
+            let cpi_context = CpiContext::new(
+                ctx.accounts.system_program.to_account_info(),
+                system_program::Transfer {
+                    from: ctx.accounts.payer.to_account_info().clone(),
+                    to: ctx.accounts.counter.to_account_info().clone(),
+                },
+            );
+            system_program::transfer(cpi_context, 1)?;
+        }
+
+        // 251 CUs. In an error case though the whole transactions is 1,199 CUs bigger than without. So error handling is expensive
+        compute_fn! { "Transfer borrowing lamports" =>
+            let counter_account_info = ctx.accounts.counter.to_account_info();
+            let mut source_lamports = counter_account_info.try_borrow_mut_lamports()?;
+            const AMOUNT: u64 = 1;
+            if **source_lamports < AMOUNT {
+                msg!("source account has less than {} lamports", AMOUNT);
+                let err = Err(anchor_lang::error::Error::from(ProgramError::InsufficientFunds));
+                return err;
+            }
+            **source_lamports -= AMOUNT;
+            let payer_account_info = ctx.accounts.payer.to_account_info();
+            **payer_account_info.try_borrow_mut_lamports()? += AMOUNT;
+        }
+
         Ok(())
     }
 }
@@ -213,10 +295,10 @@ pub struct InitializeCounter<'info> {
 
     #[account(
         init,
-        space = 8 + Counter::INIT_SPACE,
+        space = 8 + CounterData::INIT_SPACE,
         payer = payer
     )]
-    pub counter: Box<Account<'info, Counter>>,
+    pub counter: Box<Account<'info, CounterData>>,
     pub system_program: Program<'info, System>,
 }
 
@@ -236,7 +318,42 @@ pub struct InitializeCounterZeroCopy<'info> {
 #[derive(Accounts)]
 pub struct Update<'info> {
     #[account(mut)]
-    pub counter: Account<'info, Counter>,
+    pub counter: Account<'info, CounterData>,
+}
+
+#[derive(Accounts)]
+pub struct InitPdaWithSeeds<'info> {
+    #[account(
+        init,
+        seeds = [b"counter"],
+        bump,
+        payer = signer,
+        space = 8 + CounterData::INIT_SPACE
+    )]
+    pub counter_checked: Account<'info, CounterData>,
+    #[account(mut)]
+    pub signer: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct PdaAccounts<'info> {
+    #[account(mut)]
+    pub counter: Account<'info, CounterData>,
+    #[account(
+        seeds = [b"counter"],
+        bump,
+    )]
+    pub counter_checked: Account<'info, CounterData>,
+}
+
+#[derive(Accounts)]
+pub struct DoCpi<'info> {
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    #[account(mut)]
+    pub counter: Account<'info, CounterData>,
+    pub system_program: Program<'info, System>,
 }
 
 /*
@@ -257,7 +374,7 @@ pub struct UpdateZeroCopy<'info> {
 // 6389 CU
 #[account]
 #[derive(InitSpace)]
-pub struct Counter {
+pub struct CounterData {
     count: u64,
     test: Pubkey,
     test1: u64,

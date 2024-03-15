@@ -25,6 +25,17 @@ export type Counter = {
       "args": []
     },
     {
+      "name": "incrementWithFnCall",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "incrementZeroCopy",
       "accounts": [
         {
@@ -78,7 +89,7 @@ export type Counter = {
       "args": []
     },
     {
-      "name": "set",
+      "name": "setBigData",
       "accounts": [
         {
           "name": "counter",
@@ -88,7 +99,86 @@ export type Counter = {
       ],
       "args": [
         {
-          "name": "value",
+          "name": "data",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "setSmallData",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "data",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "initPdaWithSeed",
+      "accounts": [
+        {
+          "name": "counterChecked",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "pdas",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "counterChecked",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "doCpi",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "data",
           "type": "u64"
         }
       ]
@@ -96,7 +186,7 @@ export type Counter = {
   ],
   "accounts": [
     {
-      "name": "counter",
+      "name": "counterData",
       "type": {
         "kind": "struct",
         "fields": [
@@ -219,6 +309,17 @@ export const IDL: Counter = {
       "args": []
     },
     {
+      "name": "incrementWithFnCall",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "incrementZeroCopy",
       "accounts": [
         {
@@ -272,7 +373,7 @@ export const IDL: Counter = {
       "args": []
     },
     {
-      "name": "set",
+      "name": "setBigData",
       "accounts": [
         {
           "name": "counter",
@@ -282,7 +383,86 @@ export const IDL: Counter = {
       ],
       "args": [
         {
-          "name": "value",
+          "name": "data",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "setSmallData",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "data",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "initPdaWithSeed",
+      "accounts": [
+        {
+          "name": "counterChecked",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "pdas",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "counterChecked",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "doCpi",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "data",
           "type": "u64"
         }
       ]
@@ -290,7 +470,7 @@ export const IDL: Counter = {
   ],
   "accounts": [
     {
-      "name": "counter",
+      "name": "counterData",
       "type": {
         "kind": "struct",
         "fields": [
