@@ -86,7 +86,8 @@ Here is the original from @thlorenz https://github.com/thlorenz/sol-contracts/bl
 
 # Optimizations 
 
-1. Logging is very expensive. Especially logging pubkeys and concatenating strings. Use pubkey.log instead if you need it and only log what is really necessary. 
+## 1 Logging 
+Logging is very expensive. Especially logging pubkeys and concatenating strings. Use pubkey.log instead if you need it and only log what is really necessary. 
 
 ```rust
 // 11962 CU !!
@@ -113,7 +114,8 @@ compute_fn! { "Log a pubkey simple concat" =>
 }
 ```
 
-2. Bigger data types cost more CU. Use the smallest data type possible. 
+## 2 Data Types
+Bigger data types cost more CU. Use the smallest data type possible. 
 
 ```rust
 // 357
@@ -140,7 +142,8 @@ compute_fn! { "Vector u8 " =>
 
 ```
 
-3. Borsh serialization can be expensive depending on the account structs, use zero copy when possible and directly interact with the memory. It also saves more stack space than boxing. Operations on the stack are slightly more efficient though.  
+## 3 Serialization
+Borsh serialization can be expensive depending on the account structs, use zero copy when possible and directly interact with the memory. It also saves more stack space than boxing. Operations on the stack are slightly more efficient though.  
 
 ```rust
 // 6302 CU
@@ -168,7 +171,8 @@ compute_fn! { "Zero Copy Serialize" =>
 }
 ```
 
-4. Depending on the seeds find_program_address can use multiple loops and become very expensive. You can save the bump in an account or pass it in from the client to remove this overhead: 
+## 4 PDAs
+Depending on the seeds find_program_address can use multiple loops and become very expensive. You can save the bump in an account or pass it in from the client to remove this overhead: 
 
 ```rust
 pub fn pdas(ctx: Context<PdaAccounts>) -> Result<()> {
@@ -188,16 +192,16 @@ pub fn pdas(ctx: Context<PdaAccounts>) -> Result<()> {
 }
 ````
 
-5. Closures and function
+## 5 Closures and function
 
 During the tests it looks like that closures, function calls and inlining have a similar cost and were well optimized by the compiler. 
 
-6. Using native instead of anchor
+## 6 Native vs Anchor
 
 Anchor is a great tool for writing programs, but it comes with a cost. Every check that anchor does costs CU. While most checks are useful, there may be room for improvement. The anchor generated code is not optimized for CU. 
 The tests for native programs are not yet done. If you want to help with that, please let me know or open a PR. 
 
-7. Analzse and optimize yourself 
+## 7 Analyze and optimize yourself 
 
 Most important here is actually to know that every check and every serialization costs compute and how to profile and optimize it yourself since every program is different. Profile and optimize your programs today! 
 
