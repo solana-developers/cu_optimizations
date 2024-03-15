@@ -93,7 +93,7 @@ pub mod counter {
 
         // 356 CU
         compute_fn! { "Vector i64 " =>
-            // this costs 618 CU (takes the same space as u64)
+            // this costs 356 CU (takes the same space as u64)
             let mut a: Vec<i64> = Vec::new();
             a.push(1);
             a.push(1);
