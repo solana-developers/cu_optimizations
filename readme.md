@@ -221,7 +221,44 @@ pub struct PdaAccounts<'info> {
 
 During the tests it looks like that closures, function calls and inlining have a similar cost and were well optimized by the compiler. 
 
-## 6 Native vs Anchor
+## 6 CPIs 
+
+Every CPI comes with a cost and you also need to calculate in the costs of the called programs function.
+If possible avoid doing many CPIs.
+I did not find a difference in CPI cost between anchor and native and the optimization is more in the called function.
+A CPI for a transfer with the system program costs 2215 CU. 
+Interesting is though that error handling also costs a lot of CU. So profile how you handle errors and optimize there.
+
+```rust
+// 2,215 CUs
+compute_fn! { "CPI system program" =>
+    let cpi_context = CpiContext::new(
+        ctx.accounts.system_program.to_account_info(),
+        system_program::Transfer {
+            from: ctx.accounts.payer.to_account_info().clone(),
+            to: ctx.accounts.counter.to_account_info().clone(),
+        },
+    );
+    system_program::transfer(cpi_context, 1)?;
+}
+
+// 251 CUs. In an error case though the whole transactions is 1,199 CUs bigger than without. So error handling is expensive
+compute_fn! { "Transfer borrowing lamports" =>
+    let counter_account_info = ctx.accounts.counter.to_account_info();
+    let mut source_lamports = counter_account_info.try_borrow_mut_lamports()?;
+    const AMOUNT: u64 = 1;
+    if **source_lamports < AMOUNT {
+        msg!("source account has less than {} lamports", AMOUNT);
+        let err = Err(anchor_lang::error::Error::from(ProgramError::InsufficientFunds));
+        return err;
+    }
+    **source_lamports -= AMOUNT;
+    let payer_account_info = ctx.accounts.payer.to_account_info();
+    **payer_account_info.try_borrow_mut_lamports()? += AMOUNT;
+}
+```
+
+## 7 Native vs Anchor
 
 Anchor is a great tool for writing programs, but it comes with a cost. Every check that anchor does costs CU. While most checks are useful, there may be room for improvement. The anchor generated code is not necessarily optimized for CU. 
 
@@ -233,7 +270,7 @@ Anchor is a great tool for writing programs, but it comes with a cost. Every che
 
 *Size will increase with every check that you implement and every instruction that you add. You will also need to increase your program size whenever it becomes bigger.
 
-## 7 Analyze and optimize yourself 
+## 8 Analyze and optimize yourself 
 
 Most important here is actually to know that every check and every serialization costs compute and how to profile and optimize it yourself since every program is different. Profile and optimize your programs today! 
 
