@@ -25,6 +25,7 @@ describe('counter', () => {
       .rpc();
 
       console.log("Init counter " + sig);
+
   });
 
   it('Initialize Counter Zero Copy', async () => {
@@ -43,14 +44,20 @@ describe('counter', () => {
   it('Increment Counter', async () => {
     const sim = await program.methods
       .increment()
-      .accounts({ counter: counterKeypair.publicKey})
+      .accounts({ 
+        counter: counterKeypair.publicKey,
+        payer: payer.publicKey
+      })
       .simulate();
 
       console.log("Increment counter " + JSON.stringify(sim));
 
       const sig = await program.methods
       .increment()
-      .accounts({ counter: counterKeypair.publicKey})
+      .accounts({ 
+        counter: counterKeypair.publicKey,
+        payer: payer.publicKey
+      })
       .rpc();
 
       console.log("Increment counter " + sig);
@@ -117,7 +124,6 @@ describe('counter', () => {
 
     expect(currentCount.count.toNumber()).toEqual(42);
   });
-
 
   it('Set counter value u8', async () => {
 

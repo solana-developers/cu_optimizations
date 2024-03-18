@@ -165,7 +165,7 @@ compute_fn! { "Borsh Serialize" =>
 }
 
 // 151 CU - total CU including serialization 1254 
-  let counter = &mut ctx.accounts.counter_zero_copy.load_mut()?;
+let counter = &mut ctx.accounts.counter_zero_copy.load_mut()?;
 compute_fn! { "Zero Copy Serialize" =>
     counter.count = counter.count.checked_add(1).unwrap();
 }
@@ -223,8 +223,15 @@ During the tests it looks like that closures, function calls and inlining have a
 
 ## 6 Native vs Anchor
 
-Anchor is a great tool for writing programs, but it comes with a cost. Every check that anchor does costs CU. While most checks are useful, there may be room for improvement. The anchor generated code is not optimized for CU. 
-The tests for native programs are not yet done. If you want to help with that, please let me know or open a PR. 
+Anchor is a great tool for writing programs, but it comes with a cost. Every check that anchor does costs CU. While most checks are useful, there may be room for improvement. The anchor generated code is not necessarily optimized for CU. 
+
+| Test Title  | Anchor                      | Native                        |
+|-------------|-----------------------------|-------------------------------|
+| Deploy size | 265677 bytes (1.8500028 sol)| 48573 bytes (0.33895896 sol*) |
+| Counter Inc | 946 CU                      | 843 CU                        |
+| Signer Check| 303 CU                      | 103 CU                        |
+
+*Size will increase with every check that you implement and every instruction that you add. You will also need to increase your program size whenever it becomes bigger.
 
 ## 7 Analyze and optimize yourself 
 

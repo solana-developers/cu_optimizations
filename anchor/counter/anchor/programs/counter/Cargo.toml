@@ -18,6 +18,5 @@ trace-compute = []
 
 [dependencies]
 anchor-lang = "0.29.0"
-anchor-spl = "0.29.0"
 solana-program = "1.18.3"
 bytemuck = { version = "1.4.0", features = ["derive", "min_const_generics"]}

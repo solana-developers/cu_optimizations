@@ -3,7 +3,7 @@
 use anchor_lang::prelude::*;
 use bytemuck::{Pod, Zeroable};
 
-declare_id!("5w6z5PWvtkCd4PaAV7avxE6Fy5brhZsFdbRLMt8UefRQ");
+declare_id!("7XfR8Vdd8Hin4sSfbCMThaRZkXMCt7MwoB7sFSGVtYAE");
 
 #[macro_export]
 #[cfg(not(feature = "trace-compute"))]
@@ -223,11 +223,13 @@ pub mod counter {
         Ok(())
     }
 
+    // Total 946 CU
     pub fn set_big_data(ctx: Context<Update>, _data: u64) -> Result<()> {
         ctx.accounts.counter.count = _data;
         Ok(())
     }
 
+    // Total 945 CU
     pub fn set_small_data(ctx: Context<Update>, _data: u8) -> Result<()> {
         ctx.accounts.counter.count = _data as u64;
         Ok(())
@@ -317,11 +319,21 @@ pub struct InitializeCounterZeroCopy<'info> {
     pub system_program: Program<'info, System>,
 }
 
+// 15166 CU with signer 14863 CU without signer check
 #[derive(Accounts)]
 pub struct Update<'info> {
     #[account(mut)]
-    pub counter: Box<Account<'info, CounterData>>,
+    pub counter: Account<'info, CounterData>,
 }
+
+/*
+When boxing the account the CU increase to 3,657 which indicated that it takes more cu to
+Calculate the data on the heap
+#[derive(Accounts)]
+pub struct Update<'info> {
+    #[account(mut)]
+    pub counter: Box<Account<'info, Counter>>,
+}*/
 
 #[derive(Accounts)]
 pub struct InitPdaWithSeeds<'info> {
@@ -358,15 +370,6 @@ pub struct DoCpi<'info> {
     pub counter: Account<'info, CounterData>,
     pub system_program: Program<'info, System>,
 }
-
-/*
-When boxing the account the CU increase to 3,657 which indicated that it takes more cu to
-Calculate the data on the heap
-#[derive(Accounts)]
-pub struct Update<'info> {
-    #[account(mut)]
-    pub counter: Box<Account<'info, Counter>>,
-}*/
 
 #[derive(Accounts)]
 pub struct UpdateZeroCopy<'info> {
