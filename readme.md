@@ -4,7 +4,7 @@
 
 Every block on Solana has a blockspace limit of 48 million CUs and a 12 million CUs per account write lock. If you exhaust the CU limit your transaction will fail. Optimizing your program CUs has many advantages.
 
-Currently every transactions on Solana costs 5000 lamports independant on the compute units used. 
+Currently every transactions on Solana costs 5000 lamports per signature independant on the compute units used. 
 Four reasons on why to optimize CU anyway:
 
 1. A smaller transaction is more likely to be included in a block.
