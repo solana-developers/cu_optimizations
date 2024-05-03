@@ -330,6 +330,4 @@ Most important here is actually to know that every check and every serialization
 
 Feel free to play around with it and add more examples. Also here is a very nice article from @RareSkills_io https://www.rareskills.io/post/solana-compute-unit-price on that topic. I replicated some of the examples :)
 
-```
-
-```
+Some nice optimizations can also he found in this [twitter post by dev4all](https://twitter.com/kAsky53/status/1777799557759254810).

@@ -297,14 +297,14 @@ pub mod counter {
 
         // Testing checked_mul 97314 CU
         compute_fn! { "checked mul" =>
-            test_checked_mul(test_value_mul, 7, 200, 60);
+            test_value_mul = test_checked_mul(test_value_mul, 7, 200, 60);
         }
 
         msg!("Test value mul: {}", test_value_mul);
 
         // Testing bit_shift 85113 CU
         compute_fn! { "bit shift" =>
-            check_bit_shift(test_value_shift, 7, 200, 60);
+            test_value_shift = check_bit_shift(test_value_shift, 7, 200, 60);
         }
 
         msg!("Test value shift: {}", test_value_shift);
