@@ -182,6 +182,28 @@ export type Counter = {
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "checkedMathTest",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "cloneVariables",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -470,6 +492,28 @@ export const IDL: Counter = {
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "checkedMathTest",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "cloneVariables",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [

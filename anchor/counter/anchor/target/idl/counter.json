@@ -182,6 +182,28 @@
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "checkedMathTest",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "cloneVariables",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -283,5 +305,8 @@
         ]
       }
     }
-  ]
+  ],
+  "metadata": {
+    "address": "7XfR8Vdd8Hin4sSfbCMThaRZkXMCt7MwoB7sFSGVtYAE"
+  }
 }

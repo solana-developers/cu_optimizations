@@ -26,11 +26,6 @@ macro_rules! compute_fn {
     };
 }
 
-pub fn increase_counter_function(mut count: u64) -> u64 {
-    count += 1;
-    count
-}
-
 #[program]
 pub mod counter {
 
@@ -290,6 +285,124 @@ pub mod counter {
 
         Ok(())
     }
+
+    // 186578 CU
+    pub fn checked_math_test(_ctx: Context<Update>) -> Result<()> {
+        let mut test_value_mul: u64 = 7;
+        let mut test_value_shift: u64 = 7;
+
+        // The compiler is very good at optimizing and inlining thats
+        // why these calculations and in functions with parameters and the
+        // No inlining flag.
+
+        // Testing checked_mul 97314 CU
+        compute_fn! { "checked mul" =>
+            test_checked_mul(test_value_mul, 7, 200, 60);
+        }
+
+        msg!("Test value mul: {}", test_value_mul);
+
+        // Testing bit_shift 85113 CU
+        compute_fn! { "bit shift" =>
+            check_bit_shift(test_value_shift, 7, 200, 60);
+        }
+
+        msg!("Test value shift: {}", test_value_shift);
+
+        Ok(())
+    }
+
+    // Total 101237 CU
+    pub fn clone_variables(_ctx: Context<Update>) -> Result<()> {
+        let balances = vec![10_u64; 100]; // a vector with 10,000 elements
+
+        let mut sum_reference = 0;
+
+        // Here we can see that passing by reference is cheaper than cloning
+        // Interesting is also that due to the bump allocator that solana
+        // uses we will run out of memory as soon as we go to 40 iterations
+        // on the loop that clones the vector. This is because the bump allocator
+        // does not free memory and we only have 32 KB of heap space.
+
+        // 47683 CU
+        compute_fn! { "pass by reference" =>
+            for _ in 0..39 {
+                sum_reference += sum_vector_by_reference(&balances);
+            }
+        }
+
+        msg!("Sum by reference: {}", sum_reference);
+
+        let mut sum_clone = 0;
+
+        // 49322 CU
+        compute_fn! { "clone" =>
+            for _ in 0..39 {
+                sum_clone += sum_vector_by_value(balances.clone());
+            }
+        }
+
+        msg!("Sum by clone: {}", sum_clone);
+
+        Ok(())
+    }
+}
+
+// Function that takes a reference to a vector
+fn sum_vector_by_reference(balances: &Vec<u64>) -> u64 {
+    balances.iter().sum()
+}
+
+// Function that takes a vector by value
+fn sum_vector_by_value(balances: Vec<u64>) -> u64 {
+    balances.iter().sum()
+}
+
+pub fn increase_counter_function(mut count: u64) -> u64 {
+    count += 1;
+    count
+}
+
+#[inline(never)]
+pub fn check_bit_shift(
+    mut count: u64,
+    mut extraValue: u64,
+    first_loop: u64,
+    second_loop: u64,
+) -> u64 {
+    for i in 0..(first_loop) {
+        count = i;
+        for _ in 0..second_loop {
+            count = bit_shift(count);
+        }
+    }
+    count
+}
+
+#[inline(never)]
+pub fn bit_shift(mut count: u64) -> u64 {
+    count << 1
+}
+
+#[inline(never)]
+pub fn test_checked_mul(
+    mut count: u64,
+    mut extraValue: u64,
+    first_loop: u64,
+    second_loop: u64,
+) -> u64 {
+    for i in 0..(first_loop) {
+        count = i;
+        for _ in 0..second_loop {
+            checked_mul(count);
+        }
+    }
+    count
+}
+
+#[inline(never)]
+pub fn checked_mul(mut count: u64) -> u64 {
+    count.checked_mul(2).expect("overflow")
 }
 
 #[derive(Accounts)]
