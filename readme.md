@@ -328,27 +328,42 @@ Size will increase with every check that you implement and every instruction tha
 
 ## 10 Writing programs in Assembly
 
-Writing programs in assembly can be very efficient. You can write very small programs that use very little CU. The downside is that you need to write everything yourself and you need to be very careful with the stack and heap. You also need to be very careful with the memory layout and the program will be harder to read and maintain.
+Writing programs in assembly can be very efficient. You can write very small programs that use very little CU. This can be great for example to write primitives that are used in other programs like checking token balances at the end of a swap or similar.
 
-The counter example in this repository was written using the [solana-program-rosetta](https://github.com/joncinque/solana-program-rosetta?tab=readme-ov-file#assembly) by Jon Cinque. It is a great tool to get started with writing programs in assembly. It comes complete with bankrun tests wrtten in rust. It also contains examples written in Zig and C which can also bring great performance improvements.
+The downside is that you need to write everything yourself and you need to be very careful with the stack and heap. You also need to be very careful with the memory layout and the program will be harder to read and maintain. Also Anchor and even native rust are way easier to write secure programs with! Only use this if you know what you are doing.
 
-Instead of solana-program-rosetta you can also use [SBPF](https://github.com/deanmlittle/sbpf) by [Dean](https://github.com/deanmlittle) which gives your very convenient functions like `sbpf init`, `sbpf build` and `sbpf deploy`. This one comes with Js tests using `mocha` and `chai` and is also a great tool to get started with writing programs in assembly.
+There are two counter example in this repository. One was written using the [solana-program-rosetta](https://github.com/joncinque/solana-program-rosetta?tab=readme-ov-file#assembly) by Jon Cinque. It is a great tool to get started with writing programs in assembly. It comes complete with bankrun tests written in rust. It also contains examples written in Zig and C which can also bring great performance improvements.
+
+Instead of solana-program-rosetta you can also use [SBPF](https://github.com/deanmlittle/sbpf) by [Dean](https://github.com/deanmlittle) which gives your very convenient functions like `sbpf init`, `sbpf build` and `sbpf deploy`. This one comes with Js tests using `mocha` and `chai` and is also a great tool to get started with writing programs in assembly and makes setting up projects much easier.
 
 If you want to get started on Solana ASM program writing you should start by reading the [docs on the exact memory layout](https://solana.com/docs/programs/faq#input-parameter-serialization) of the [entry point](https://github.com/anza-xyz/agave/blob/1b3eb3df5e244cdbdedb7eff8978823ef0611669/sdk/program/src/entrypoint.rs#L336) and the registers for heap and stack frame.
 
+There is also a VSCode extension by Dean: https://github.com/deanmlittle/vscode-sbpf-asm that helps with autocomplete and syntax highlighting.
+
 It is probably not realistic to write huge programs in assembly, but for small programs or primitives it can be a useful tool. Also knowing how Rust and C code transforms to assembly code can be useful when optimizing your programs.
+
+Here are some ASM examples for reference:
+- [Fibonacci example](https://github.com/deanmlittle/solana-fibonacci-asm)
+- [Sol Transfer](https://github.com/joncinque/solana-program-rosetta/tree/main/transfer-lamports/asm)
+- Hello world: https://github.com/deanmlittle/ezbpf run `sbpf init`
+- The Counter examples can be found here in this repo
+
+If you want to use AI like chat GPT to write your programs make sure to train it on these examples before you start. 
 
 ## 11 Compiler flags and optimizations
 
 There is certain compiler flags that you set set to decrease CU usage of yor program. You can set the following flags in your `Cargo.toml`. For example you could disable overflow checks.
+Note thought that changing a flag like overflow checks of course comes with additional risks like overflow bugs.
 
-
-
+TODO: Add performance tests on different flags.
+https://doc.rust-lang.org/cargo/reference/profiles.html#overflow-checks
 
 ## 12 Analyze and optimize yourself
 
 Most important here is actually to know that every check and every serialization costs compute and how to profile and optimize it yourself since every program is different. Profile and optimize your programs today!
 
 Feel free to play around with it and add more examples. Also here is a very nice article from @RareSkills_io https://www.rareskills.io/post/solana-compute-unit-price on that topic. I replicated some of the examples :)
+
+Also here is a nice Twitter thread on the topic: https://x.com/daglihet/status/1840396773833261085 with another CU optimization repository looking also at different entry points and how to optimize them. https://github.com/hetdagli234/optimising-solana-programs/tree/main
 
 Some nice optimizations can also he found in this [twitter post by dev4all](https://twitter.com/kAsky53/status/1777799557759254810).
