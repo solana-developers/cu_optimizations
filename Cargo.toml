@@ -1,0 +1,6 @@
+[workspace]
+members = [
+  "counterAsm"
+]
+resolver = "2"
+

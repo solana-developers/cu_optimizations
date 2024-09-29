@@ -15,8 +15,9 @@ no-log-ix-name = []
 cpi = ["no-entrypoint"]
 default = []
 trace-compute = []
+idl-build = ["anchor-lang/idl-build"]
 
 [dependencies]
-anchor-lang = "0.29.0"
-solana-program = "1.18.3"
+anchor-lang = "0.30.0"
+solana-program = "1.18.15"
 bytemuck = { version = "1.4.0", features = ["derive", "min_const_generics"]}

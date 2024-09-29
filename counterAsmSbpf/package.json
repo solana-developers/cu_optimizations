@@ -1,0 +1,21 @@
+{
+  "name": "sbpfCounter",
+  "description": "Created with sBPF",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "KEYPAIR=$(solana config get | grep Keypair | cut -b 15-) && cross-env SIGNER=$(cat $KEYPAIR) mocha --import=tsx tests/**/*.ts"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.91.8"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "@types/chai": "^4.3.16",
+    "@types/mocha": "^10.0.6",
+    "chai": "^5.1.1",
+    "mocha": "^10.4.0",
+    "tsx": "^4.11.0"
+  }
+}

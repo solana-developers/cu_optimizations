@@ -2,8 +2,8 @@
   "name": "@counter/anchor",
   "version": "0.0.1",
   "dependencies": {
-    "@coral-xyz/anchor": "^0.29.0",
-    "@solana/web3.js": "1.90.0"
+    "@coral-xyz/anchor": "^0.30.1",
+    "@solana/web3.js": "1.93.4"
   },
   "type": "commonjs",
   "main": "./index.cjs",

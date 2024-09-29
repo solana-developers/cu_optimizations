@@ -1,0 +1,7 @@
+target/
+.zig-cache/
+zig-out/
+solana-llvm/
+solana-zig/
+solana-c-sdk/
+out/

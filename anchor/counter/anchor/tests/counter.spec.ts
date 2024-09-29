@@ -14,7 +14,7 @@ describe('counter', () => {
   const counterKeypair = Keypair.generate();
   const counterZeroCopyKeypair = Keypair.generate();
 
-  it('Initialize Counter zero copy', async () => {
+  it.only('Initialize Counter', async () => {
     const sig = await program.methods
       .initialize()
       .accounts({
@@ -60,7 +60,7 @@ describe('counter', () => {
     console.log('Increment counter ' + sig);
 
     const currentCount = await program.account.counterData.fetch(
-      counterKeypair.publicKey
+      counterKeypair.publicKey,
     );
     console.log('Current count ' + currentCount.count.toNumber());
   });
@@ -79,7 +79,7 @@ describe('counter', () => {
     console.log('Increment counter zero copy ' + sig);
 
     const currentCount = await program.account.counterZeroCopy.fetch(
-      counterZeroCopyKeypair.publicKey
+      counterZeroCopyKeypair.publicKey,
     );
     console.log('Current count ' + currentCount.count.toNumber());
   });
@@ -116,7 +116,7 @@ describe('counter', () => {
       .rpc();
 
     const currentCount = await program.account.counterData.fetch(
-      counterKeypair.publicKey
+      counterKeypair.publicKey,
     );
 
     expect(currentCount.count.toNumber()).toEqual(42);
@@ -136,7 +136,7 @@ describe('counter', () => {
       .rpc();
 
     const currentCount = await program.account.counterData.fetch(
-      counterKeypair.publicKey
+      counterKeypair.publicKey,
     );
 
     expect(currentCount.count.toNumber()).toEqual(42);
@@ -160,7 +160,7 @@ describe('counter', () => {
   it('PDAS', async () => {
     const counter_checked = PublicKey.findProgramAddressSync(
       [Buffer.from('counter')],
-      program.programId
+      program.programId,
     );
 
     const init_sig = await program.methods

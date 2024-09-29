@@ -312,19 +312,40 @@ compute_fn! { "Clone" =>
 msg!("Sum by clone: {}", sum_clone);
 ```
 
-## 9 Native vs Anchor
+## 9 Native vs Anchor vs Asm
 
 Anchor is a great tool for writing programs, but it comes with a cost. Every check that anchor does costs CU. While most checks are useful, there may be room for improvement. The anchor generated code is not necessarily optimized for CU.
 
-| Test Title   | Anchor                       | Native                       |
-| ------------ | ---------------------------- | ---------------------------- |
-| Deploy size  | 265677 bytes (1.8500028 sol) | 48573 bytes (0.33895896 sol) |
-| Counter Inc  | 946 CU                       | 843 CU                       |
-| Signer Check | 303 CU                       | 103 CU                       |
+| Test Title   | Anchor                       | Native                       | ASM \*                      |
+| ------------ | ---------------------------- | ---------------------------- | --------------------------- |
+| Deploy size  | 265677 bytes (1.8500028 sol) | 48573 bytes (0.33895896 sol) | 1389 bytes (0.01055832 sol) |
+| Counter Inc  | 946 CU                       | 843 CU                       | 6 CU                        |
+| Signer Check | 303 CU                       | 103 CU                       | 1 CU                        |
+
+- Note though that the assembly example is a very simple example and does not include any checks or error handling.
 
 Size will increase with every check that you implement and every instruction that you add. You will also need to increase your program size whenever it becomes bigger.
 
-## 10 Analyze and optimize yourself
+## 10 Writing programs in Assembly
+
+Writing programs in assembly can be very efficient. You can write very small programs that use very little CU. The downside is that you need to write everything yourself and you need to be very careful with the stack and heap. You also need to be very careful with the memory layout and the program will be harder to read and maintain.
+
+The counter example in this repository was written using the [solana-program-rosetta](https://github.com/joncinque/solana-program-rosetta?tab=readme-ov-file#assembly) by Jon Cinque. It is a great tool to get started with writing programs in assembly. It comes complete with bankrun tests wrtten in rust. It also contains examples written in Zig and C which can also bring great performance improvements.
+
+Instead of solana-program-rosetta you can also use [SBPF](https://github.com/deanmlittle/sbpf) by [Dean](https://github.com/deanmlittle) which gives your very convenient functions like `sbpf init`, `sbpf build` and `sbpf deploy`. This one comes with Js tests using `mocha` and `chai` and is also a great tool to get started with writing programs in assembly.
+
+If you want to get started on Solana ASM program writing you should start by reading the [docs on the exact memory layout](https://solana.com/docs/programs/faq#input-parameter-serialization) of the [entry point](https://github.com/anza-xyz/agave/blob/1b3eb3df5e244cdbdedb7eff8978823ef0611669/sdk/program/src/entrypoint.rs#L336) and the registers for heap and stack frame.
+
+It is probably not realistic to write huge programs in assembly, but for small programs or primitives it can be a useful tool. Also knowing how Rust and C code transforms to assembly code can be useful when optimizing your programs.
+
+## 11 Compiler flags and optimizations
+
+There is certain compiler flags that you set set to decrease CU usage of yor program. You can set the following flags in your `Cargo.toml`. For example you could disable overflow checks.
+
+
+
+
+## 12 Analyze and optimize yourself
 
 Most important here is actually to know that every check and every serialization costs compute and how to profile and optimize it yourself since every program is different. Profile and optimize your programs today!
 
