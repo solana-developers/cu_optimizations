@@ -353,13 +353,41 @@ Here are some ASM examples for reference:
 
 If you want to use AI like chat GPT to write your programs make sure to train it on these examples before you start.
 
-## 11 Compiler flags and optimizations
+## 11 Other low level optimizations
+
+### Compiler flags
 
 There is certain compiler flags that you set set to decrease CU usage of yor program. You can set the following flags in your `Cargo.toml`. For example you could disable overflow checks.
 Note thought that changing a flag like overflow checks of course comes with additional risks like overflow bugs.
 
 TODO: Add performance tests on different flags.
 https://doc.rust-lang.org/cargo/reference/profiles.html#overflow-checks
+
+### Inline
+
+Inlining functions can save CU. The compiler is very good at optimizing the code and inline checks and remove unnecessary calculations if a value is not used for example.
+
+```rust
+#[inline(always)]
+fn add(a: u64, b: u64) -> u64 {
+    a + b
+}
+```
+
+Note though that you need to balance inline always vs inline never. Inlining saves CU but needs more stack space while inline never saves stack space but costs more CU.
+
+### Non standart heap allocators
+
+The standart heap allocator is a bump heap allocator which does not free memory. This can lead to out of memory errors if you use a lot of memory. You can use a different heap allocator.
+
+Metaplex token meta data program uses smalloc heap for example: https://github.com/metaplex-foundation/mpl-core-candy-machine/pull/10
+
+### Different entry points 
+
+The standart entry points is not necessarily the most efficient one. You can use a different entry point to save CU. For example the no_std entry point:
+https://github.com/cavemanloverboy/solana-nostd-entrypoint
+It uses unsafe rust though.
+You can read on some comparison about this here: https://github.com/hetdagli234/optimising-solana-programs/tree/main
 
 ## 12 Analyze and optimize yourself
 
