@@ -10,7 +10,7 @@ entrypoint:
 
   ldxdw r4, [r1 + 8 + 8 + 32 + 32 + 8 + 8] // Put the account data into R4 
   add64 r4, 1 // increase counter by one 
-  stxdw [r1 + 8 + 8 + 32 + 32 + 8 + 8], r4 / write data back to account
+  stxdw [r1 + 8 + 8 + 32 + 32 + 8 + 8], r4 // write data back to account
 
   jne r4, 1, error // Check if counter is 1 
 
