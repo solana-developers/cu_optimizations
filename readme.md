@@ -382,12 +382,13 @@ The standart heap allocator is a bump heap allocator which does not free memory.
 
 Metaplex token meta data program uses smalloc heap for example: https://github.com/metaplex-foundation/mpl-core-candy-machine/pull/10
 
-### Different entry points 
+### Different entry points
 
 The standart entry points is not necessarily the most efficient one. You can use a different entry point to save CU. For example the no_std entry point:
 https://github.com/cavemanloverboy/solana-nostd-entrypoint
 It uses unsafe rust though.
-You can read on some comparison about this here: https://github.com/hetdagli234/optimising-solana-programs/tree/main
+You can read on some comparison of different entry points here: https://github.com/hetdagli234/optimising-solana-programs/tree/main
+and here: https://github.com/febo/eisodos
 
 ## 12 Analyze and optimize yourself
 
