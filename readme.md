@@ -338,17 +338,20 @@ Instead of solana-program-rosetta you can also use [SBPF](https://github.com/dea
 
 If you want to get started on Solana ASM program writing you should start by reading the [docs on the exact memory layout](https://solana.com/docs/programs/faq#input-parameter-serialization) of the [entry point](https://github.com/anza-xyz/agave/blob/1b3eb3df5e244cdbdedb7eff8978823ef0611669/sdk/program/src/entrypoint.rs#L336) and the registers for heap and stack frame.
 
+Great [repository links and tips for ASM programs](https://github.com/deanmlittle/awesome-sbpf).
+
 There is also a VSCode extension by Dean: https://github.com/deanmlittle/vscode-sbpf-asm that helps with autocomplete and syntax highlighting.
 
 It is probably not realistic to write huge programs in assembly, but for small programs or primitives it can be a useful tool. Also knowing how Rust and C code transforms to assembly code can be useful when optimizing your programs.
 
 Here are some ASM examples for reference:
+
 - [Fibonacci example](https://github.com/deanmlittle/solana-fibonacci-asm)
 - [Sol Transfer](https://github.com/joncinque/solana-program-rosetta/tree/main/transfer-lamports/asm)
 - Hello world: https://github.com/deanmlittle/ezbpf run `sbpf init`
 - The Counter examples can be found here in this repo
 
-If you want to use AI like chat GPT to write your programs make sure to train it on these examples before you start. 
+If you want to use AI like chat GPT to write your programs make sure to train it on these examples before you start.
 
 ## 11 Compiler flags and optimizations
 
