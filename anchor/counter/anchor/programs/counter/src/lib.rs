@@ -484,7 +484,7 @@ pub struct CounterData {
   test: Pubkey,
   test1: u64,
   test2: u64,
-  big_struct: BigStructNoZeroCopy,
+  //big_struct: BigStructNoZeroCopy, // When adding this big struct you will get a stack frame violation
   bump: u8,
 }
 

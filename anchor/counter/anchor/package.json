@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.1",
-    "@solana/web3.js": "1.93.4"
+    "@solana/web3.js": "1.95.3"
   },
   "type": "commonjs",
   "main": "./index.cjs",

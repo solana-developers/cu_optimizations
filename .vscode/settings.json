@@ -1,0 +1,12 @@
+{
+  "files.associations": {
+    "solana_sdk.h": "c",
+    "blake3.h": "c",
+    "compute_units.h": "c",
+    "cpi.h": "c",
+    "deserialize.h": "c",
+    "deserialize_deprecated.h": "c",
+    "keccak.h": "c",
+    "entrypoint.h": "c"
+  }
+}

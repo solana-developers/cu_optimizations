@@ -440,51 +440,6 @@ export type Counter = {
       }
     },
     {
-      "name": "bigStructNoZeroCopy",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "test",
-            "type": "pubkey"
-          },
-          {
-            "name": "test1",
-            "type": "u64"
-          },
-          {
-            "name": "test2",
-            "type": "u64"
-          },
-          {
-            "name": "test3",
-            "type": "pubkey"
-          },
-          {
-            "name": "test4",
-            "type": "u64"
-          },
-          {
-            "name": "test5",
-            "type": "u64"
-          },
-          {
-            "name": "test6",
-            "type": "pubkey"
-          },
-          {
-            "name": "pubkeyArray",
-            "type": {
-              "array": [
-                "pubkey",
-                120
-              ]
-            }
-          }
-        ]
-      }
-    },
-    {
       "name": "counterData",
       "type": {
         "kind": "struct",
@@ -504,14 +459,6 @@ export type Counter = {
           {
             "name": "test2",
             "type": "u64"
-          },
-          {
-            "name": "bigStruct",
-            "type": {
-              "defined": {
-                "name": "bigStructNoZeroCopy"
-              }
-            }
           },
           {
             "name": "bump",

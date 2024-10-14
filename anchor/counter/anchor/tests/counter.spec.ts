@@ -14,7 +14,7 @@ describe('counter', () => {
   const counterKeypair = Keypair.generate();
   const counterZeroCopyKeypair = Keypair.generate();
 
-  it.only('Initialize Counter', async () => {
+  it('Initialize Counter', async () => {
     const sig = await program.methods
       .initialize()
       .accounts({
@@ -166,8 +166,6 @@ describe('counter', () => {
     const init_sig = await program.methods
       .initPdaWithSeed()
       .accounts({
-        counterChecked: counter_checked[0],
-        systemProgram: anchor.web3.SystemProgram.programId,
       })
       .rpc({ skipPreflight: true });
     console.log('Init Pda with seed ' + init_sig);
@@ -176,7 +174,6 @@ describe('counter', () => {
       .pdas()
       .accounts({
         counter: counterKeypair.publicKey,
-        counterChecked: counter_checked[0],
       })
       .simulate();
 
@@ -186,8 +183,6 @@ describe('counter', () => {
       .pdas()
       .accounts({
         counter: counterKeypair.publicKey,
-        counterChecked: counter_checked[0],
-        systemProgram: anchor.web3.SystemProgram.programId,
       })
       .rpc({ skipPreflight: true });
     console.log('PDAS ' + sig);
