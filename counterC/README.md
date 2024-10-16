@@ -1,8 +1,10 @@
-- Install Solana C compiler
+# Install Solana C compiler
 
 ```console
 ./install-solana-c.sh
 ```
+
+# Build the program
 
 - Go to a program directory
 
@@ -10,23 +12,23 @@
 cd counterC
 ```
 
-- Build the program
-
 ```console
 make
 ```
 
-- Test it
+# Test the C program
 
 ```console
 SBF_OUT_DIR="out" cargo test --manifest-path "Cargo.toml"
 ```
 
-- OR use the helper from the root of this repo to build and test
+OR use the helper from the root of this repo to build and test
 
 ```console
 ./test-c.sh counter
 ```
+
+# Test the unsave Rust C program
 
 A similar result can also be achieved using unsafe rust. The code is in the `counter/src/lib.rs` file. The code is compiled to a shared object file using the following command:
 
@@ -34,10 +36,16 @@ A similar result can also be achieved using unsafe rust. The code is in the `cou
 cargo build-sbf
 ```
 
-Then you can run the same tests against the rust compiled file: 
+Then you can run the same tests against the rust compiled file:
 
 ```bash
 SBF_OUT_DIR="../target/deploy" cargo test --manifest-path "Cargo.toml"
+```
+
+OR use the helper from the root of this repo to build and test the rust version as well:
+
+```console
+./test-rust-mangle-c.sh counter
 ```
 
 Both the C and Rust version result in 5 CU for increasing a counter. So its a matter of taste which one you want to use.
@@ -62,9 +70,9 @@ This is using the `clang`compiler with the `-S`flag which generates assembly cod
 
 If you want to see the generated Assemlby code for the C mangled code you can use `llvm-objdump`:
 
-First install llvm: 
+First install llvm:
 
-```bash 
+```bash
 brew install llvm
 ```
 
@@ -78,4 +86,30 @@ llvm-objdump \
 --debug-vars --section-headers \
 --symbolize-operands \
 --source --disassemble target/deploy/solana_program_rosetta_helloworld.so > counter/src/rust-unsave-c-code-assembly.s
+```
+
+To get more info in the dissasebmled file you can use different flags when compiling. For example:
+
+```bash
+RUSTFLAGS="-C debuginfo=2 -C opt-level=0" cargo build-sbf
+```
+
+of if you cant see some functions even:
+
+```bash
+RUSTFLAGS="-C debuginfo=2 -C opt-level=0 -C link-dead-code" cargo build-sbf
+```
+
+If you wonder where the strings that you are printing are actually saved. Its in the `.rodata`which stands for read only data.
+
+You can find all strings in an `.so` file using the following command:
+
+```bash
+strings target/deploy/solana_program_rosetta_helloworld.so
+```
+
+or you can directly print the `.rodata` section using `llvm-objdump`:
+
+```bash
+llvm-objdump -s -j .rodata target/deploy/solana_program_rosetta_helloworld.so
 ```

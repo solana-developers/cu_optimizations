@@ -312,19 +312,28 @@ compute_fn! { "Clone" =>
 msg!("Sum by clone: {}", sum_clone);
 ```
 
-## 9 Native vs Anchor vs Asm
+## 9 Native vs Anchor vs Asm vs C vs unsave rust
 
 Anchor is a great tool for writing programs, but it comes with a cost. Every check that anchor does costs CU. While most checks are useful, there may be room for improvement. The anchor generated code is not necessarily optimized for CU.
 
-| Test Title   | Anchor                       | Native                       | ASM \*                      |
-| ------------ | ---------------------------- | ---------------------------- | --------------------------- |
-| Deploy size  | 265677 bytes (1.8500028 sol) | 48573 bytes (0.33895896 sol) | 1389 bytes (0.01055832 sol) |
-| Counter Inc  | 946 CU                       | 843 CU                       | 6 CU                        |
-| Signer Check | 303 CU                       | 103 CU                       | 1 CU                        |
+| Test Title   | Anchor                       | Native                       | ASM \*1                     | C                           |
+| ------------ | ---------------------------- | ---------------------------- | --------------------------- | --------------------------- |
+| Deploy size  | 265677 bytes (1.8500028 sol) | 48573 bytes (0.33895896 sol) | 1389 bytes (0.01055832 sol) | 1333 Bytes (0.01016856 sol) |
+| Counter Inc  | 946 CU                       | 843 CU                       | 4 CU                        | 5 CU                        |
+| Signer Check | 303 CU                       | 103 CU                       | 1 CU                        | -                           |
 
-- Note though that the assembly example is a very simple example and does not include any checks or error handling.
+| Test Title   | Unsave Rust C \*2          |
+| ------------ | -------------------------- |
+| Deploy size  | 973 bytes (0.00766296 sol) |
+| Counter Inc  | 5 CU                       |
+| Signer Check | -                          |
+
+*1 Note though that the assembly example is a very simple example and does not include any checks or error handling.
+*2 Can be decreased to 4 CU using [sbf-asm-macros](https://crates.io/crates/sbpf-asm-macros) to remove the return type since it is not needed in success case.
 
 Size will increase with every check that you implement and every instruction that you add. You will also need to increase your program size whenever it becomes bigger.
+
+Note please that all these tests are tests are super specific for a counter and not really realistic for a production program. Theses tests are only to show the differences between the different program types and ways to think about optimizing your program.
 
 ## 10 Writing programs in Assembly
 
@@ -378,13 +387,13 @@ Note though that you need to balance inline always vs inline never. Inlining sav
 
 ### Non standart heap allocators
 
-The standart heap allocator is a bump heap allocator which does not free memory. This can lead to out of memory errors if you use a lot of memory. You can use a different heap allocator.
+The standard heap allocator is a bump heap allocator which does not free memory. This can lead to out of memory errors if you use a lot of memory. You can use a different heap allocator.
 
 Metaplex token meta data program uses smalloc heap for example: https://github.com/metaplex-foundation/mpl-core-candy-machine/pull/10
 
 ### Different entry points
 
-The standart entry points is not necessarily the most efficient one. You can use a different entry point to save CU. For example the no_std entry point:
+The standard entry points is not necessarily the most efficient one. You can use a different entry point to save CU. For example the no_std entry point:
 https://github.com/cavemanloverboy/solana-nostd-entrypoint
 It uses unsafe rust though.
 You can read on some comparison of different entry points here: https://github.com/hetdagli234/optimising-solana-programs/tree/main

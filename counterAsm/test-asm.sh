@@ -6,5 +6,5 @@ set -e
 PROGRAM_DIR=$ROOT_DIR/$PROGRAM_NAME
 cd asm
 make
-SBF_OUT_DIR="./asm/out" cargo test --manifest-path "Cargo.toml"
+SBF_OUT_DIR="./asm/out" cargo test
 

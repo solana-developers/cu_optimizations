@@ -21,8 +21,6 @@ extern uint64_t entrypoint(const uint8_t *input) {
   uint8_t* data_ptr = params.ka[0].data;
   *data_ptr += 1;
 
-  *params.ka[0].data += 1;
-
   // Logging is expensive. Only do it when you really need to
   // sol_log_pubkey(params.ka[0].key);
   // sol_log_64(params.ka[0].data[0], 0, 0, 0, 0);
