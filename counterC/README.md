@@ -113,3 +113,45 @@ or you can directly print the `.rodata` section using `llvm-objdump`:
 ```bash
 llvm-objdump -s -j .rodata target/deploy/solana_program_rosetta_helloworld.so
 ```
+
+You can also read the elf file using `readelf`:
+
+```bash
+readelf -a target/deploy/solana_program_rosetta_helloworld.so
+```
+
+### Input Parameter Serialization
+
+SBF loaders serialize the program input parameters into a byte array that is
+then passed to the program's entrypoint, where the program is responsible for
+deserializing it on-chain. One of the changes between the deprecated loader and
+the current loader is that the input parameters are serialized in a way that
+results in various parameters falling on aligned offsets within the aligned byte
+array. This allows deserialization implementations to directly reference the
+byte array and provide aligned pointers to the program.
+
+The latest loader serializes the program input parameters as follows (all
+encoding is little endian):
+
+- 8 bytes unsigned number of accounts
+- For each account
+  - 1 byte indicating if this is a duplicate account, if not a duplicate then
+    the value is 0xff, otherwise the value is the index of the account it is a
+    duplicate of.
+  - If duplicate: 7 bytes of padding
+  - If not duplicate:
+    - 1 byte boolean, true if account is a signer
+    - 1 byte boolean, true if account is writable
+    - 1 byte boolean, true if account is executable
+    - 4 bytes of padding
+    - 32 bytes of the account public key
+    - 32 bytes of the account's owner public key
+    - 8 bytes unsigned number of lamports owned by the account
+    - 8 bytes unsigned number of bytes of account data
+    - x bytes of account data
+    - 10k bytes of padding, used for realloc
+    - enough padding to align the offset to 8 bytes.
+    - 8 bytes rent epoch
+- 8 bytes of unsigned number of instruction data
+- x bytes of instruction data
+- 32 bytes of the program id
