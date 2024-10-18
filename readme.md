@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The get started there is a [video guide](https://www.youtube.com/watch?v=7CbAK7Oq_o4&t=38s&ab_channel=Solana) on how to optimize CU in programs which covers the contents in this repository.
+The get started there is a [video guide](https://www.youtube.com/watch?v=7CbAK7Oq_o4) on how to optimize CU in programs which covers the contents in this repository.
 And also a [Part1](https://www.youtube.com/watch?v=xoJ-3NkYXfY&ab_channel=Solandy%5Bsolandy.sol%5D) and [Part2](https://www.youtube.com/watch?v=Pwly1cOa2hg&ab_channel=Solandy%5Bsolandy.sol%5D) on how optimize programs by SolAndy.
 
 Every block on Solana has a blockspace limit of 48 million CUs and a 12 million CUs per account write lock. If you exhaust the CU limit your transaction will fail. Optimizing your program CUs has many advantages.
@@ -319,13 +319,13 @@ msg!("Sum by clone: {}", sum_clone);
 
 Anchor is a great tool for writing programs, but it comes with a cost. Every check that anchor does costs CU. While most checks are useful, there may be room for improvement. The anchor generated code is not necessarily optimized for CU.
 
-| Test Title   | Anchor                                                     | Native                                     | ASM \*1                                              | C                                  |
-| ------------ | ---------------------------------------------------------- | ------------------------------------------ | ---------------------------------------------------- | ---------------------------------- |
-| Deploy size  | 265677 bytes (1.8500028 sol)                               | 48573 bytes (0.33895896 sol)               | 1389 bytes (0.01055832 sol)                          | 1333 Bytes (0.01016856 sol)        |
-| Counter Inc  | [946 CU](counterAnchor/anchor/programs/counter/src/lib.rs) | [843 CU](counterNative/program/src/lib.rs) | [4 CU](counterAsmSbpf/src/sbpfCounter/sbpfCounter.s) | [5](counterC/counter/src/main.c)CU |
-| Signer Check | 303 CU                                                     | 103 CU                                     | 1 CU                                                 | -                                  |
+| Test Title   | Anchor                                                     | Native                                     | ASM \*1                                              | C                                   |
+| ------------ | ---------------------------------------------------------- | ------------------------------------------ | ---------------------------------------------------- | ----------------------------------- |
+| Deploy size  | 265677 bytes (1.8500028 sol)                               | 48573 bytes (0.33895896 sol)               | 1389 bytes (0.01055832 sol)                          | 1333 Bytes (0.01016856 sol)         |
+| Counter Inc  | [946 CU](counterAnchor/anchor/programs/counter/src/lib.rs) | [843 CU](counterNative/program/src/lib.rs) | [4 CU](counterAsmSbpf/src/sbpfCounter/sbpfCounter.s) | [5 CU](counterC/counter/src/main.c) |
+| Signer Check | 303 CU                                                     | 103 CU                                     | 1 CU                                                 | -                                   |
 
-| Test Title   | Unsave Rust C \*2                   |
+| Test Title   | Unsave Rust \*2                     |
 | ------------ | ----------------------------------- |
 | Deploy size  | 973 bytes (0.00766296 sol)          |
 | Counter Inc  | [5 CU](counterC/counter/src/lib.rs) |

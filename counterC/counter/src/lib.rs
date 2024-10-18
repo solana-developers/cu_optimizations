@@ -10,12 +10,12 @@ use solana_program::msg;
 // The function increments the byte at offset 96 from the provided input pointer
 // which is the first byte of the data field in the first account which is our counter account in this case.
 // Improper handling or misuse of the pointer could lead to undefined behavior.
+// Takes 5 CU. Can be improved to 4 CU using https://crates.io/crates/sbpf-asm-macros and removing the return type
 #[no_mangle]
 pub extern "C" fn entrypoint(input: *mut u8) -> u64 {
     unsafe {
         *input.add(96) += 1;
     }
-
     0
 }
 

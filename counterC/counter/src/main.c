@@ -3,12 +3,13 @@
  */
 #include <solana_sdk.h>
 
-// Highly optimized version directly working on the incoming byte array
+// Highly optimized version directly working on the incoming byte array (5 CU)
 // extern uint64_t entrypoint(const uint8_t *input) {
 //   ((uint8_t *)input)[96]++;
 //   return SUCCESS;
 // }
 
+// Version that uses the SolAccountInfo struct with the deserialization it takes 96 CU
 extern uint64_t entrypoint(const uint8_t *input) {
   SolAccountInfo accounts[2];
   SolParameters params = (SolParameters){.ka = accounts};
